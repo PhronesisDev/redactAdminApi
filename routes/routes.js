@@ -74,6 +74,7 @@ router.patch(`signup/:id`, async (request, response ) => {
         // Save the updated user to the database
         const updatedUser = await user.save();
     
+        
         response.status(200).json(updatedUser);
       } catch (error) {
         response.status(400).json({ message: error.message });
