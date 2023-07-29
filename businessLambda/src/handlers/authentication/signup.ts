@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
-import { Authentication } from "../models/user.model";
-import { connectToDatabase } from "../db-connection";
+import { Authentication } from "../../models/user.model";
+import { connectToDatabase } from "../../db-connection";
 
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -10,17 +10,18 @@ exports.handler = async (event, context) => {
   await connectToDatabase();
 
   try {
-    const { identityNo, password } = event;
+    const body = JSON.parse(event.body)
+    const { registrationNo, password } = body;
 
     // Encrypt the password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Find the user with the given id
-    let user = await Authentication.findOne({ identityNo });
+    let user = await Authentication.findOne({ registrationNo });
 
     if (!user) {
       // If no user is found, create a new user with the provided ID and hashed password
-      user = new Authentication({ identityNo, password: hashedPassword });
+      user = new Authentication({ registrationNo, password: hashedPassword });
       await user.save();
     } else {
       // If the user is found, update the hashed password
@@ -37,7 +38,7 @@ exports.handler = async (event, context) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: userWithoutPassword,
+      body: JSON.stringify(userWithoutPassword),
     };
   } catch (error) {
     console.error("Error finding/updating user:", error);
@@ -46,7 +47,7 @@ exports.handler = async (event, context) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: { message: "Error finding/updating user" },
+      body: JSON.stringify({ message: "Error finding/updating user" }),
     };
   }
 };

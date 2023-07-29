@@ -24,7 +24,7 @@ export class BusinessLambdaStack extends cdk.Stack {
 
     // Define the Lambda function with code from the correct file path
     const authenticateFn = new NodejsFunction(this, `authenticateFunction`, {
-      entry: path.resolve(__dirname, '../src/handlers/post.ts'),
+      entry: path.resolve(__dirname, '../src/handlers/authentication/post.ts'),
       functionName: `authentication`,
       handler: 'handler',
       memorySize: 512,
@@ -37,8 +37,9 @@ export class BusinessLambdaStack extends cdk.Stack {
         target: 'es2020',
       }
     });
+    // SignUp Function 
     const signUpFn = new NodejsFunction(this, 'signupFunction', {
-      entry: path.resolve(__dirname, '../src/handlers/signup.ts'),
+      entry: path.resolve(__dirname, '../src/handlers/authentication/signup.ts'),
       functionName:'sign-up',
       handler:'handler',
       memorySize: 512,
@@ -52,16 +53,95 @@ export class BusinessLambdaStack extends cdk.Stack {
       }
     })
 
+    const createJobFunction = new NodejsFunction(this, 'createJobFunction', {
+      entry: path.resolve(__dirname, '../src/handlers/jobPosts/post.ts'),
+      functionName: 'create-job-post',
+      handler: 'handler',
+      memorySize: 512,
+      environment: {
+        DATABASE_URL: process.env.DATABASE_URL,
+      },
+      runtime: Runtime.NODEJS_18_X,
+      timeout: cdk.Duration.seconds(15),
+      bundling: {
+        target: 'es2020',
+      }
+    })
+
+    const deleteJobFunction = new NodejsFunction(this, 'deleteJobFunction', {
+      entry: path.resolve(__dirname, '../src/handlers/jobPosts/remove.ts'),
+      functionName: 'delete-job-post',
+      handler: 'handler',
+      memorySize: 512,
+      environment: {
+        DATABASE_URL: process.env.DATABASE_URL,
+      },
+      runtime: Runtime.NODEJS_18_X,
+      timeout: cdk.Duration.seconds(15),
+      bundling: {
+        target: 'es2020',
+      }
+    })
+    const updateJobFunction = new NodejsFunction(this, 'updateJobFunction', {
+      entry: path.resolve(__dirname, '../src/handlers/jobPosts/update.ts'),
+      functionName: 'update-job-post',
+      handler: 'handler',
+      memorySize: 512,
+      environment: {
+        DATABASE_URL: process.env.DATABASE_URL,
+      },
+      runtime: Runtime.NODEJS_18_X,
+      timeout: cdk.Duration.seconds(15),
+      bundling: {
+        target: 'es2020',
+      }
+    })
+
+    const getJobFunction = new NodejsFunction(this, 'getJobFunction', {
+      entry: path.resolve(__dirname, '../src/handlers/jobPosts/get.ts'),
+      functionName: 'get-job-post',
+      handler: 'handler',
+      memorySize: 512,
+      environment: {
+        DATABASE_URL: process.env.DATABASE_URL,
+      },
+      runtime: Runtime.NODEJS_18_X,
+      timeout: cdk.Duration.seconds(15),
+      bundling: {
+        target: 'es2020',
+      }
+    })
     const createAuthenticationLambdaIntegration = new apigw.LambdaIntegration(
       authenticateFn
     );
     const createSignupLambdaIntegration = new apigw.LambdaIntegration(
       signUpFn
+    );
+
+    const createJobPostLambdaIntegration = new apigw.LambdaIntegration(
+      createJobFunction
     )
 
+    const deleteJobPostLambdaIntegration = new apigw.LambdaIntegration(
+      deleteJobFunction
+    )
+    const updateJobPostLambdaIntegration = new apigw.LambdaIntegration(
+      updateJobFunction
+    )
+
+    const getJobPostLambdaIntegration = new apigw.LambdaIntegration(
+      getJobFunction
+    )
     const businessResource = api.root.addResource("authenticate");
     businessResource.addMethod("POST", createAuthenticationLambdaIntegration );
     const signupBusinessResource=api.root.addResource('signup');
     signupBusinessResource.addMethod('POST',createSignupLambdaIntegration);
+
+    const businessPosts = api.root.addResource('posts');
+    businessPosts.addMethod('POST',createJobPostLambdaIntegration);
+    businessPosts.addMethod('GET', getJobPostLambdaIntegration);
+    businessPosts.addMethod('PUT', updateJobPostLambdaIntegration);
+    businessPosts.addMethod('DELETE',deleteJobPostLambdaIntegration);
+    
   }
 }

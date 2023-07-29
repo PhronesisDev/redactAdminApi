@@ -1,7 +1,12 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 const userSchema = new Schema({
-  registrationNo: {
+  email: {
+    type: Schema.Types.String,
+    required: true,
+    unique: true,
+  },
+  username: {
     type: Schema.Types.String,
     required: true,
     unique: true,
@@ -11,10 +16,10 @@ const userSchema = new Schema({
     required: true,
   },
 }, {
-  collection: "CompanyAuthentication",
+  collection: "businessUsers",
   timestamps: true,
 });
 
-const Authentication = mongoose.model('Authentication', userSchema);
+const User = mongoose.model('User', userSchema);
 
-export { Authentication};
+export { User};

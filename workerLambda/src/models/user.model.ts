@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 const userSchema = new Schema({
-  registrationNo: {
+  identityNo: {
     type: Schema.Types.String,
     required: true,
     unique: true,
@@ -11,7 +11,7 @@ const userSchema = new Schema({
     required: true,
   },
 }, {
-  collection: "CompanyAuthentication",
+  collection: "Authentication",
   timestamps: true,
 });
 

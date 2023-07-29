@@ -1,3 +1,4 @@
 node_modules
-
+businessLambda/node_modules
+workerLambda/node_modules
 .env

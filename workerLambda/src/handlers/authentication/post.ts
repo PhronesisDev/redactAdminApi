@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
-import { Authentication } from "../models/user.model";
-import { connectToDatabase } from "../db-connection";
+import { connectToDatabase } from "../../db-connection";
+import { Authentication } from "../../models/user.model";
+
 
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
