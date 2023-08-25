@@ -8,13 +8,13 @@ exports.handler = async (event, context) => {
 
   try {
     // Check if the "reference" query parameter exists in the event object
-    const { reference } = event.queryStringParameters || {};
+    const { reference } = event.queryStringParameters?.reference|| {};
 
     // Prepare the query object based on the existence of the "reference" parameter
-    const query = reference ? { reference } : {};
+   
 
     // Find job posts based on the query (either filtered by reference or all job posts)
-    const jobPosts = await Posts.find(query);
+    const jobPosts = await Posts.find({reference: `${event.queryStringParameters?.reference}`});
 
     if (jobPosts.length === 0) {
       return {
