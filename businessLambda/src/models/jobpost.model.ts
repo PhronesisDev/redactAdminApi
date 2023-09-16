@@ -12,7 +12,7 @@ const userSchema = new Schema(
     },
     company: {
       type: Schema.Types.Array,
-      required: false,
+      required: true,
     },
     reference: {
       type: Schema.Types.String,

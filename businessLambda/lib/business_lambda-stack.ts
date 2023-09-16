@@ -186,6 +186,33 @@ export class BusinessLambdaStack extends cdk.Stack {
       },
     });
     // ----------------------------------------End Reports Section ---------------------------------------------------------//
+
+    // ----------------------------------------Facial Recognition Section -------------------------------------------------//
+    const getFaceMatchFunction = new NodejsFunction(
+      this,
+      "getFaceMatchFunction",
+      {
+        entry: path.resolve(
+          __dirname,
+          "../src/handlers/facialRecognition/post.ts"
+        ),
+        functionName: "get-comparison-post",
+        handler: "handler",
+        memorySize: 512,
+        runtime: Runtime.NODEJS_18_X,
+        timeout: cdk.Duration.seconds(15),
+        bundling: {
+          target: "es2020",
+        },
+      }
+    );
+
+    // ---------------------------------------- End Facial Recognition Section -------------------------------------------------//
+
+    const getFacialRecognitionLambdaIntegration = new apigw.LambdaIntegration(
+      getFaceMatchFunction
+    );
+
     const createAuthenticationLambdaIntegration = new apigw.LambdaIntegration(
       authenticateFn
     );
@@ -205,7 +232,6 @@ export class BusinessLambdaStack extends cdk.Stack {
     const getReportsLambdaIntegration = new apigw.LambdaIntegration(
       getReportsFunction
     );
-
 
     const createJobPostLambdaIntegration = new apigw.LambdaIntegration(
       createJobFunction
@@ -237,5 +263,8 @@ export class BusinessLambdaStack extends cdk.Stack {
     businessReports.addMethod("GET", getReportsLambdaIntegration);
     businessReports.addMethod("PUT", updateReportsLambdaIntegration);
     businessReports.addMethod("DELETE", deleteReportsLambdaIntegration);
+
+    const facialRecognition = api.root.addResource("facialrecognition");
+    facialRecognition.addMethod("POST", getFacialRecognitionLambdaIntegration)
   }
 }
