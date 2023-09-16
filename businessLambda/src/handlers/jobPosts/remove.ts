@@ -10,18 +10,18 @@ exports.handler = async (event, context) => {
     // Assuming the object ID is passed as a query parameter in the event object
     const { id } = event.queryStringParameters;
 
-    // Check if the ID is valid before proceeding with the deletion
-    if (!isValidObjectId(id)) {
-      return {
-        statusCode: 400, // Bad Request
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: "Invalid object ID",
-        }),
-      };
-    }
+    // // Check if the ID is valid before proceeding with the deletion
+    // if (!isValidObjectId(id)) {
+    //   return {
+    //     statusCode: 400, // Bad Request
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       message: "Invalid object ID",
+    //     }),
+    //   };
+    // }
 
     // Find the job post by its object ID
     const jobPost = await Posts.findById(id);
