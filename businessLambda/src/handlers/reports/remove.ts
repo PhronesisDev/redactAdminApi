@@ -1,5 +1,5 @@
 import { connectToDatabase } from "../../db-connection";
-import { Posts } from "../../models/jobpost.model";
+import { Reports } from "../../models/reports.model";
 
 exports.handler = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false;
@@ -10,36 +10,36 @@ exports.handler = async (event, context) => {
     // Assuming the object ID is passed as a query parameter in the event object
     const { id } = event.queryStringParameters;
 
-    // // Check if the ID is valid before proceeding with the deletion
-    // if (!isValidObjectId(id)) {
-    //   return {
-    //     statusCode: 400, // Bad Request
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       message: "Invalid object ID",
-    //     }),
-    //   };
-    // }
+    // Check if the ID is valid before proceeding with the deletion
+    if (!isValidObjectId(id)) {
+      return {
+        statusCode: 400, // Bad Request
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: "Invalid object ID",
+        }),
+      };
+    }
 
     // Find the job post by its object ID
-    const jobPost = await Posts.findById(id);
+    const reportedUser = await Reports.findById(id);
 
-    if (!jobPost) {
+    if (!reportedUser) {
       return {
         statusCode: 404, // Not Found
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: "No job post found with the given object ID",
+          message: "No reported user found with the given object ID",
         }),
       };
     }
 
     // Delete the job post
-    await jobPost.deleteOne();
+    await reportedUser.deleteOne();
 
     return {
       statusCode: 200, // OK
@@ -47,8 +47,8 @@ exports.handler = async (event, context) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        message: "Job Post Deleted Successfully",
-        deletedJobPost: jobPost,
+        message: "Reported user removed Successfully",
+        deletedJobPost: reportedUser,
       }),
     };
   } catch (error) {
@@ -58,7 +58,7 @@ exports.handler = async (event, context) => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ message: "Error deleting job post" }),
+      body: JSON.stringify({ message: "An error occurred while trying to remove reported " }),
     };
   }
 };

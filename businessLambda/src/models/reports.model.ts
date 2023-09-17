@@ -6,33 +6,29 @@ const userSchema = new Schema(
       type: Schema.Types.ObjectId,
       auto: true,
     },
-    title: {
+    name: {
       type: Schema.Types.String,
       required: true,
     },
-    company: {
-      type: Schema.Types.Array,
-      required: true,
-    },
-    reference: {
-      type: Schema.Types.String,
-      required: false,
-    },
-    description: {
-      type: Schema.Types.String,
-      required: false,
-    },
-    applicants: {
+    status: {
       type: Schema.Types.Array,
       required: false,
     },
+    avatar: {
+      type: Schema.Types.String,
+      required: false,
+    },
+    identityNo: {
+        type: Schema.Types.String,
+        required: true,
+    }
   },
   {
-    collection: "Posts",
+    collection: "reports",
     timestamps: true,
   }
 );
 
-const Posts = mongoose.model("Posts", userSchema);
+const Reports = mongoose.model("reports", userSchema);
 
-export { Posts };
+export { Reports };
