@@ -18,10 +18,6 @@ const userSchema = new Schema(
       type: Schema.Types.String,
       required: false,
     },
-    identityNo: {
-        type: Schema.Types.String,
-        required: true,
-    }
   },
   {
     collection: "reports",
