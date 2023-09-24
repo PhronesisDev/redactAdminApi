@@ -209,6 +209,61 @@ export class BusinessLambdaStack extends cdk.Stack {
 
     // ---------------------------------------- End Facial Recognition Section -------------------------------------------------//
 
+    // ---------------------------------------- Send Mail Section -------------------------------------------------------------//
+    const postMailFunction = new NodejsFunction(this, "postMailFunction", {
+      entry: path.resolve(__dirname, "../src/handlers/sendMail/post.ts"),
+      functionName: "mail-function-post",
+      handler: "handler",
+      memorySize: 512,
+      runtime: Runtime.NODEJS_18_X,
+      timeout: cdk.Duration.seconds(15),
+      bundling: {
+        target: "es2020",
+      },
+    });
+    // --------------------------------------- End Mail Section ----------------------------------------------------------------//
+    // ----------------------------------------Update Profile ----------------------------------------------------------------- //
+    const postProfileFunction = new NodejsFunction(
+      this,
+      "postProfileFunction",
+      {
+        entry: path.resolve(__dirname, "../src/handlers/profile/post.ts"),
+        functionName: "profile-function-post",
+        handler: "handler",
+        memorySize: 512,
+        runtime: Runtime.NODEJS_18_X,
+        timeout: cdk.Duration.seconds(15),
+        bundling: {
+          target: "es2020",
+        },
+      }
+    );
+    const getProfileFunction = new NodejsFunction(
+      this,
+      "getProfileFunction",
+      {
+        entry: path.resolve(__dirname, "../src/handlers/profile/get.ts"),
+        functionName: "profile-function-get",
+        handler: "handler",
+        memorySize: 512,
+        runtime: Runtime.NODEJS_18_X,
+        timeout: cdk.Duration.seconds(15),
+        bundling: {
+          target: "es2020",
+        },
+      }
+    );
+    // ---------------------------------- End of Update Profile -------------------------------------------------------------- //
+
+    const postProfileLambdaIntegration = new apigw.LambdaIntegration(
+      postProfileFunction
+    );
+    const getProfileLambdaIntegration = new apigw.LambdaIntegration(
+      getProfileFunction
+    );
+    const postMailLambdaIntegration = new apigw.LambdaIntegration(
+      postMailFunction
+    );
     const getFacialRecognitionLambdaIntegration = new apigw.LambdaIntegration(
       getFaceMatchFunction
     );
@@ -265,6 +320,13 @@ export class BusinessLambdaStack extends cdk.Stack {
     businessReports.addMethod("DELETE", deleteReportsLambdaIntegration);
 
     const facialRecognition = api.root.addResource("facialrecognition");
-    facialRecognition.addMethod("POST", getFacialRecognitionLambdaIntegration)
+    facialRecognition.addMethod("POST", getFacialRecognitionLambdaIntegration);
+
+    const sendMail = api.root.addResource("sendmail");
+    sendMail.addMethod("POST", postMailLambdaIntegration);
+
+    const profile = api.root.addResource("profile");
+    profile.addMethod("POST", postProfileLambdaIntegration);
+    profile.addMethod("GET", getProfileLambdaIntegration )
   }
 }

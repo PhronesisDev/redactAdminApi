@@ -6,19 +6,18 @@ exports.handler = async (event, context) => {
 
   await connectToDatabase();
   const requestBody = JSON.parse(event.body);
-  const { name, status, avatar, identityNo } = requestBody;
+  const { name, status, avatar} = requestBody;
   try {
     console.log("Event: ", event.body.title);
     // Create a new reported user in the database
-    const newJobPost = new Reports({
+    const report = new Reports({
       name,
       status,
-      avatar,
-      identityNo,
+      avatar
     });
 
     // Save reported user to the database
-    const savedJobPost = await newJobPost.save();
+    const savedReport = await report.save();
 
     return {
       statusCode: 201, // Created
@@ -27,7 +26,7 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         message: "User Reported Successfully",
-        jobPost: savedJobPost,
+        report: savedReport,
       }),
     };
   } catch (error) {
